@@ -8,7 +8,7 @@ interface RejectionPayload {
   status: string;
 }
 
-export const useRejectAdMutation = (adId: number) => {
+export const useAdMutation = (adId: number) => {
   const queryClient = useQueryClient();
 
   const mutationFn = ({ reason, comment, status }: RejectionPayload) => {

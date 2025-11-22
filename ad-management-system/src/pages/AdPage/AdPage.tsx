@@ -4,15 +4,16 @@ import { actions } from "@/constants/app";
 import { AppRoutes } from "@/constants/routes";
 import { formatTimestamp } from "@/lib/formatTimestamp";
 import { fetchAllAds, fetchItem } from "@/services/ads";
-import { useRejectAdMutation } from "@/services/mutations";
+import { useAdMutation } from "@/services/mutations";
 import type { Ad } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AdGallery } from "./components/Gallery";
 
 export const AdPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("rejected");
   const {
@@ -29,11 +30,11 @@ export const AdPage = () => {
     queryFn: () => fetchItem(Number(id)),
   });
 
-  const { mutate } = useRejectAdMutation(Number(id));
+  const { mutate } = useAdMutation(Number(id));
 
-  const handleApprove = () => {
+  const handleApprove = useCallback(() => {
     mutate({ adId: Number(id), status: "approve" });
-  };
+  }, [id, mutate]);
 
   const user = ad?.seller;
 
@@ -50,10 +51,74 @@ export const AdPage = () => {
 
   const characteristics = ad ? Object.keys(ad.characteristics) : [];
 
-  const onModalOpen = (newStatus: string) => {
+  const onModalOpen = useCallback((newStatus: string) => {
     setIsModalOpen(true);
     setStatus(newStatus);
-  };
+  }, []);
+
+  const goToNextAd = useCallback(() => {
+    if (nextPageLink !== "#") {
+      navigate(nextPageLink);
+    }
+  }, [nextPageLink, navigate]);
+
+  const goToPrevAd = useCallback(() => {
+    if (prevPageLink !== "#") {
+      navigate(prevPageLink);
+    }
+  }, [prevPageLink, navigate]);
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (isModalOpen && event.key !== "Escape") {
+        return;
+      }
+
+      switch (event.key) {
+        case "a":
+        case "A":
+          event.preventDefault();
+          handleApprove();
+          break;
+        case "d":
+        case "D":
+          event.preventDefault();
+          onModalOpen("rejected");
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          goToNextAd();
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          goToPrevAd();
+          break;
+        case "Escape":
+          if (isModalOpen) {
+            setIsModalOpen(false);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [
+    isModalOpen,
+    id,
+    nextPageLink,
+    prevPageLink,
+    handleApprove,
+    onModalOpen,
+    navigate,
+    goToNextAd,
+    goToPrevAd,
+  ]);
 
   if (!ad || !user || isLoading || isFetching) {
     return <div>Loading...</div>;
@@ -65,7 +130,7 @@ export const AdPage = () => {
       <div className="text-2xl mb-10 flex justify-center gap-10">
         <h2>{ad.category}</h2>
         <h2>{ad.price} ₽</h2>
-    </div>
+      </div>
       <div className="grid grid-cols-2 gap-10">
         <AdGallery images={ad.images} />
         <div className="border-purple-700 border p-5 rounded-2xl">

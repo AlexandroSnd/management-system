@@ -1,4 +1,4 @@
-import { useRejectAdMutation } from "@/services/mutations";
+import { useAdMutation } from "@/services/mutations";
 import React from "react";
 import { Modal } from "../ui/Modal";
 import { Button } from "../ui/button";
@@ -22,7 +22,7 @@ export const RejectModal = ({
     null
   );
   const [comment, setComment] = React.useState<string>("");
-  const { mutate } = useRejectAdMutation(adId);
+  const { mutate } = useAdMutation(adId);
 
   const handleSend = () => {
     if (!selectedReason) return;
