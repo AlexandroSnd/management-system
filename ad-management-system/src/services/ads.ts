@@ -1,3 +1,4 @@
+import { CATEGORIES } from "@/constants/app";
 import { getSortParams } from "@/lib/getSortParams";
 import axios from "axios";
 
@@ -32,11 +33,27 @@ export const fetchAllAds = async () => {
   }
 };
 
-export const fetchPageAds = async (currentPage: number, sort: string, search: string) => {
-  const {sortBy, sortOrder} = getSortParams(sort);
+export const fetchPageAds = async (
+  currentPage: number,
+  sort: string,
+  search: string,
+  category?: string,
+  minPrice?: string,
+  maxPrice?: string,
+  status?: string
+) => {
+  const { sortBy, sortOrder } = getSortParams(sort);
+  const categoryIdParam = category
+    ? `&categoryId=${CATEGORIES.indexOf(category)}`
+    : "";
+  const minPriceParam = minPrice ? `&minPrice=${minPrice}` : "";
+  const maxPriceParam = maxPrice ? `&maxPrice=${maxPrice}` : "";
+  const statusParam = status ? `&status=${status}` : "";
+
   try {
     const response = await axios.get(
-      `${BASE_URL}/ads?limit=10&page=${currentPage}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}`
+      `${BASE_URL}/ads?limit=10&page=${currentPage}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}` +
+        `${categoryIdParam}${minPriceParam}${maxPriceParam}${statusParam}`
     );
     console.log(response.data);
     return response.data;
@@ -68,17 +85,17 @@ export const fetchUser = async (userId: string) => {
   }
 };
 
-export const fetchStats = async (type: 'pie' | 'bar' | 'pie2') => {
-  let URL
+export const fetchStats = async (type: "pie" | "bar" | "pie2") => {
+  let URL;
   switch (type) {
-    case 'pie':
-      URL = 'summary'
+    case "pie":
+      URL = "summary";
       break;
-    case 'bar':
-      URL = 'chart/activity'
+    case "bar":
+      URL = "chart/activity";
       break;
-    case 'pie2':
-      URL = '/chart/categories'
+    case "pie2":
+      URL = "/chart/categories";
       break;
   }
   try {
@@ -89,4 +106,4 @@ export const fetchStats = async (type: 'pie' | 'bar' | 'pie2') => {
     console.error("Error fetching stats:", error);
     return undefined;
   }
-}
+};

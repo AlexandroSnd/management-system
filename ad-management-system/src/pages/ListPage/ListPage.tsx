@@ -2,7 +2,7 @@ import { SelectSort } from "@/components/Select";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { actions } from "@/constants/app";
+import { actions, CATEGORIES, STATUSES } from "@/constants/app";
 import { AppRoutes } from "@/constants/routes";
 import { formatTimestamp } from "@/lib/formatTimestamp";
 import type { Ad } from "@/types/types";
@@ -20,7 +20,16 @@ export const ListPage = () => {
     search,
     onSearch,
     isLoading,
+    onCategory,
+    category: activeCategory,
+    onResetFilters,
+    onPriceChange,
+    minPrice,
+    maxPrice,
+    onStatus,
+    status: activeStatus,
   } = useListPage();
+
   const pages = Array(pagination.totalPages).fill(null);
 
   return (
@@ -30,14 +39,61 @@ export const ListPage = () => {
           Профиль
         </div>
       </Link>
-      <div className="flex gap-4 mt-15">
-        <Input
-          placeholder="Поиск..."
-          onChange={(e) => onSearch(e.target.value)}
-          value={search}
-        />
-        <SelectSort onChange={(value) => onSort(value as Sort)} value={sort} />
+      <div className="flex flex-col gap-5 mt-15">
+        <div className="flex gap-4">
+          <Input
+            placeholder="Поиск..."
+            onChange={(e) => onSearch(e.target.value)}
+            value={search}
+          />
+          <SelectSort
+            onChange={(value) => onSort(value as Sort)}
+            value={sort}
+          />
+        </div>
+        <div className="flex gap-4 mt-4">
+          {CATEGORIES.map((category) => (
+            <Button
+              key={category}
+              onClick={() => onCategory(category)}
+              className={`p-2 border rounded-2xl ${
+                category === activeCategory ? "bg-purple-600 text-white" : ""
+              }`}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+        <div className="flex gap-4">
+          {STATUSES.map((status) => (
+            <Button
+              key={status}
+              onClick={() => onStatus(status)}
+              className={`p-2 border rounded-2xl ${
+                status === activeStatus ? "bg-purple-600 text-white" : ""
+              }`}
+            >
+              {actions[status]}
+            </Button>
+          ))}
+        </div>
+        <div className="flex w-[50%] gap-4">
+          <Input
+            placeholder="Минимальная цена"
+            onChange={(e) => onPriceChange(e.target.value, maxPrice)}
+            value={minPrice}
+          />
+          <Input
+            placeholder="Максимальная цена"
+            onChange={(e) => onPriceChange(minPrice, e.target.value)}
+            value={maxPrice}
+          />
+        </div>
+        <div>
+          <Button onClick={onResetFilters}>Сбросить фильтры</Button>
+        </div>
       </div>
+
       <ul className="flex flex-col gap-7">
         {!isLoading &&
           ads.map((ad: Ad) => (

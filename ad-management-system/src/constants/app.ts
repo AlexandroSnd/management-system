@@ -20,3 +20,16 @@ export const CATEGORY_COLOR_MAPPING: { [key: string]: string } = {
   Работа: "#9C27B0",
   Детское: "#FF5722",
 };
+
+export const CATEGORIES = [
+  "Электроника",
+  "Недвижимость",
+  "Транспорт",
+  "Работа",
+  "Услуги",
+  "Животные",
+  "Мода",
+  "Детское",
+];
+
+export const STATUSES = ["pending", "approved", "rejected", "draft"];
