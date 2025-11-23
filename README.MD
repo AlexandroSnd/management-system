@@ -99,7 +99,7 @@
 - Для запуска backend сервера:
 
 ```
-cd test-int3-server
+cd tech-int3-server
 npm install
 npm start
 ```
