@@ -1,6 +1,6 @@
 import { fetchPageAds } from "@/services/ads";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Pagination = {
   currentPage: number;
@@ -26,10 +26,28 @@ export const useListPage = () => {
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [statuses, setStatuses] = useState<Array<string>>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleFocus = (event: KeyboardEvent) => {
+      if (event.key === "/") {
+        if (inputRef.current) {
+          event.preventDefault();
+          inputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleFocus);
+
+    return () => {
+      window.removeEventListener("keydown", handleFocus);
+    };
+  }, []);
 
   const onStatus = (status: string) => {
     if (statuses.includes(status)) {
-      setStatuses(statuses.filter(s => s !== status));
+      setStatuses(statuses.filter((s) => s !== status));
     } else {
       setStatuses([...statuses, status]);
     }
@@ -79,7 +97,15 @@ export const useListPage = () => {
       statuses,
     ],
     queryFn: () =>
-      fetchPageAds(currentPage, sort, search, category, minPrice, maxPrice, statuses),
+      fetchPageAds(
+        currentPage,
+        sort,
+        search,
+        category,
+        minPrice,
+        maxPrice,
+        statuses
+      ),
   });
 
   return {
@@ -98,7 +124,8 @@ export const useListPage = () => {
     onPriceChange,
     minPrice,
     maxPrice,
-    statuses,
     onStatus,
+    statuses,
+    inputRef,
   };
 };

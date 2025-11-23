@@ -28,6 +28,7 @@ export const ListPage = () => {
     maxPrice,
     onStatus,
     statuses: activeStatuses,
+    inputRef
   } = useListPage();
 
   const pages = Array(pagination.totalPages).fill(null);
@@ -43,6 +44,7 @@ export const ListPage = () => {
         <div className="flex gap-4">
           <Input
             placeholder="Поиск..."
+            ref={inputRef}
             onChange={(e) => onSearch(e.target.value)}
             value={search}
           />
