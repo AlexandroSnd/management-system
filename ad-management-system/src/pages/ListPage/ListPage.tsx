@@ -27,7 +27,7 @@ export const ListPage = () => {
     minPrice,
     maxPrice,
     onStatus,
-    status: activeStatus,
+    statuses: activeStatuses,
   } = useListPage();
 
   const pages = Array(pagination.totalPages).fill(null);
@@ -70,7 +70,7 @@ export const ListPage = () => {
               key={status}
               onClick={() => onStatus(status)}
               className={`p-2 border rounded-2xl ${
-                status === activeStatus ? "bg-purple-600 text-white" : ""
+                activeStatuses.includes(status) ? "bg-purple-600 text-white" : ""
               }`}
             >
               {actions[status]}

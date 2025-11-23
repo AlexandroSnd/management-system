@@ -25,10 +25,14 @@ export const useListPage = () => {
   const [category, setCategory] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [statuses, setStatuses] = useState<Array<string>>([]);
 
   const onStatus = (status: string) => {
-    setStatus(status);
+    if (statuses.includes(status)) {
+      setStatuses(statuses.filter(s => s !== status));
+    } else {
+      setStatuses([...statuses, status]);
+    }
     setCurrentPage(1);
   };
 
@@ -54,7 +58,7 @@ export const useListPage = () => {
     setCurrentPage(1);
     setMinPrice("");
     setMaxPrice("");
-    setStatus("");
+    setStatuses([]);
   };
 
   const onPriceChange = (minPrice: string, maxPrice: string) => {
@@ -72,10 +76,10 @@ export const useListPage = () => {
       category,
       minPrice,
       maxPrice,
-      status,
+      statuses,
     ],
     queryFn: () =>
-      fetchPageAds(currentPage, sort, search, category, minPrice, maxPrice, status),
+      fetchPageAds(currentPage, sort, search, category, minPrice, maxPrice, statuses),
   });
 
   return {
@@ -94,7 +98,7 @@ export const useListPage = () => {
     onPriceChange,
     minPrice,
     maxPrice,
-    status,
+    statuses,
     onStatus,
   };
 };

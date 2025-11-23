@@ -40,7 +40,7 @@ export const fetchPageAds = async (
   category?: string,
   minPrice?: string,
   maxPrice?: string,
-  status?: string
+  statuses?: Array<string>
 ) => {
   const { sortBy, sortOrder } = getSortParams(sort);
   const categoryIdParam = category
@@ -48,12 +48,12 @@ export const fetchPageAds = async (
     : "";
   const minPriceParam = minPrice ? `&minPrice=${minPrice}` : "";
   const maxPriceParam = maxPrice ? `&maxPrice=${maxPrice}` : "";
-  const statusParam = status ? `&status=${status}` : "";
+  const statusesParam = statuses && statuses.length > 0 ? statuses.map(status => `&status=${status}`).join('') : "";
 
   try {
     const response = await axios.get(
       `${BASE_URL}/ads?limit=10&page=${currentPage}&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${search}` +
-        `${categoryIdParam}${minPriceParam}${maxPriceParam}${statusParam}`
+        `${categoryIdParam}${minPriceParam}${maxPriceParam}${statusesParam}`
     );
     console.log(response.data);
     return response.data;
