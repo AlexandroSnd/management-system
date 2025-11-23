@@ -19,7 +19,7 @@ export const getSortParams = (sort: string) => {
     sortOrder = "asc";
   }
   if (sort === "urgent") {
-    sortBy = "urgency";
+    sortBy = "priority";
     sortOrder = "desc";
   }
 

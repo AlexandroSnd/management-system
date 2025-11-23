@@ -40,7 +40,7 @@ export const fetchPageAds = async (
   category?: string,
   minPrice?: string,
   maxPrice?: string,
-  statuses?: Array<string>
+  statuses?: Array<string>,
 ) => {
   const { sortBy, sortOrder } = getSortParams(sort);
   const categoryIdParam = category
