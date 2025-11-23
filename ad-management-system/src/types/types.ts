@@ -16,7 +16,8 @@ export type Ad = {
 export type ModerationStep = {
     moderatorName: string,
     timestamp: string,
-    action: string
+    action: string,
+    comment?: string
 }
 
 export type Seller = {

@@ -140,10 +140,11 @@ export const AdPage = () => {
               <span>Нет истории модерации</span>
             )}
             {ad.moderationHistory.map((step) => (
-              <div className="flex flex-col gap-2" key={step.timestamp}>
+              <div className="flex flex-col gap-2 border-b pb-2" key={step.timestamp}>
                 <span>- Модератор: {step.moderatorName}</span>
                 <span>Дата: {formatTimestamp(step.timestamp)}</span>
                 <span>{actions[step.action]}</span>
+                {step.comment && <span>Комментарий: {step.comment}</span>}
               </div>
             ))}
           </div>
